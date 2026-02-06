@@ -39,31 +39,62 @@ const SnowParticles = () => {
 };
 
 function App() {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [step, setStep] = useState(0); // 0: Email, 1: Color, 2: Size, 3: Details, 4: Success
+  const [formData, setFormData] = useState({
+    email: '',
+    color: '',
+    size: '',
+    name: '',
+    phone: '',
+    address: ''
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (email) {
-      try {
-        const response = await fetch('http://localhost:3001/api/subscribe', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email }),
-        });
+  const MODELS = [
+    { id: 'black', name: 'VOID BLACK', img: '/assets/model_black.jpg' },
+    { id: 'blue', name: 'ABYSS BLUE', img: '/assets/model_blue.jpg' },
+    { id: 'purple', name: 'NEON PURPLE', img: '/assets/model_purple.jpg' },
+  ];
 
-        if (response.ok) {
-          setSubmitted(true);
-          console.log('Registered:', email);
-        } else {
-          // Handle specific errors like duplicates
-          console.error('Subscription failed:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Network error:', error);
+  const SIZES = ['S', 'M', 'L', 'XL'];
+
+  const validateStep = () => {
+    if (step === 0) return formData.email.includes('@');
+    if (step === 1) return formData.color !== '';
+    if (step === 2) return formData.size !== '';
+    if (step === 3) return formData.name && formData.phone && formData.address;
+    return true;
+  };
+
+  const handleNext = () => {
+    if (validateStep()) {
+      if (step === 3) {
+        handleSubmit();
+      } else {
+        setStep(p => p + 1);
       }
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setStep(4);
+        console.log('Order registered:', formData);
+      } else {
+        const data = await response.json();
+        alert('Error: ' + (data.error || response.statusText));
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      alert('Network error. Check console.');
     }
   };
 
@@ -98,41 +129,131 @@ function App() {
       {/* Main Content */}
       <main className="main-content">
 
-
-
-        <h1 className="hero-title animate-fade-in delay-100">
-          <span className="text-gradient drop-shadow-primary">Born</span>
-          <span className="text-white drop-shadow-white">Cold</span>
-        </h1>
-
-        <p className="hero-subtitle animate-fade-in delay-200">
-          The temperature drops when we arrive. <br />
-          Streetwear forged in zero degrees.
-        </p>
-
-        {!submitted ? (
-          <form onSubmit={handleSubmit} className="signup-form animate-fade-in delay-300">
-            <input
-              type="email"
-              placeholder="ENTER YOUR ICE MAIL"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="email-input glass-panel"
-            />
-            <button
-              type="submit"
-              className="submit-btn"
-            >
-              Get Notified
-            </button>
-          </form>
-        ) : (
-          <div className="success-message glass-panel animate-fade-in">
-            <h3>You are on the list.</h3>
-            <p>Prepare for the drop. Stay cold.</p>
-          </div>
+        {step < 4 && (
+          <h1 className="hero-title animate-fade-in delay-100">
+            <span className="text-gradient drop-shadow-primary">Born</span>
+            <span className="text-white drop-shadow-white">Cold</span>
+          </h1>
         )}
+
+        <div className="wizard-container animate-fade-in delay-200">
+
+          {/* STEP 0: EMAIL */}
+          {step === 0 && (
+            <>
+              <p className="hero-subtitle">
+                The temperature drops when we arrive. <br />
+                Enter the freeze.
+              </p>
+              <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="signup-form">
+                <input
+                  type="email"
+                  placeholder="ENTER YOUR ICE MAIL"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                  className="email-input glass-panel"
+                  autoFocus
+                />
+                <button type="submit" className="submit-btn" disabled={!formData.email}>
+                  ENTER
+                </button>
+              </form>
+            </>
+          )}
+
+          {/* STEP 1: COLOR SELECTION */}
+          {step === 1 && (
+            <>
+              <h3>CHOOSE YOUR ELEMENT</h3>
+              <div className="models-grid">
+                {MODELS.map((m) => (
+                  <div
+                    key={m.id}
+                    className={`model-card ${formData.color === m.name ? 'selected' : ''}`}
+                    onClick={() => setFormData({ ...formData, color: m.name })}
+                  >
+                    <img src={m.img} alt={m.name} className="model-img" />
+                    <div className="model-name">{m.name}</div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* STEP 2: SIZE SELECTION */}
+          {step === 2 && (
+            <>
+              <h3>CONFIRM YOUR FIT</h3>
+              <div className="size-grid">
+                {SIZES.map((s) => (
+                  <button
+                    key={s}
+                    className={`size-btn ${formData.size === s ? 'selected' : ''}`}
+                    onClick={() => setFormData({ ...formData, size: s })}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* STEP 3: DETAILS */}
+          {step === 3 && (
+            <>
+              <h3>FINAL DETAILS</h3>
+              <div className="input-stack">
+                <input
+                  type="text"
+                  placeholder="FULL NAME"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+                <input
+                  type="tel"
+                  placeholder="PHONE NUMBER"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
+                <input
+                  type="text"
+                  placeholder="SHIPPING ADDRESS"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                />
+              </div>
+            </>
+          )}
+
+          {/* NAVIGATION BUTTONS (For Steps 1, 2, 3) */}
+          {step > 0 && step < 4 && (
+            <div className="nav-buttons">
+              <button className="submit-btn back-btn" onClick={() => setStep(step - 1)}>
+                BACK
+              </button>
+              <button className="submit-btn next-btn" onClick={handleNext} disabled={!validateStep()}>
+                {step === 3 ? 'CONFIRM ORDER' : 'NEXT'}
+              </button>
+            </div>
+          )}
+
+          {/* STEP 4: SUCCESS ANIMATION */}
+          {step === 4 && (
+            <div className="success-container glass-panel animate-fade-in">
+              <div className="final-display">
+                {MODELS.map((m) => (
+                  <div key={m.id} className="final-card">
+                    <img src={m.img} alt="Collection" />
+                  </div>
+                ))}
+              </div>
+              <h2 className="success-text">ORDER CONFIRMED</h2>
+              <p>Welcome to the cold, {formData.name}.</p>
+            </div>
+          )}
+
+        </div>
 
         <div className="social-links animate-fade-in delay-300">
           <div className="social-icon">IG</div>
