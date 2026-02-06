@@ -694,3 +694,174 @@ body {
   color: #aaa;
   font-size: 0.9rem;
 }
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+@media (max-width: 768px) {
+
+  /* App container adjustments */
+  .app-container {
+    padding: 1rem;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* Logo smaller on mobile */
+  .logo-corner {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .logo-corner .logo-wrapper {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  /* Hero title smaller */
+  .hero-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    padding-left: 0.5rem;
+  }
+
+  /* Wizard container */
+  .wizard-container {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+
+  .wizard-container h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Product cards - STACK VERTICALLY on mobile */
+  .models-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .model-card {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .model-img {
+    height: 200px;
+  }
+
+  .model-name {
+    font-size: 0.75rem;
+  }
+
+  /* Size buttons - 2x2 grid on mobile */
+  .size-grid {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .size-btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+    flex: 1 1 45%;
+  }
+
+  /* Input fields */
+  .input-stack input {
+    padding: 14px 12px;
+    font-size: 1rem;
+  }
+
+  /* Navigation buttons */
+  .nav-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .back-btn,
+  .next-btn {
+    width: 100%;
+    flex: none;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Success container */
+  .success-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .final-display {
+    gap: 8px;
+  }
+
+  .final-card {
+    width: 80px;
+    height: 100px;
+  }
+
+  .success-text {
+    font-size: 1rem;
+  }
+
+  /* Email form */
+  .signup-form {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .email-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Social links */
+  .social-links {
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+
+  /* Bottom fade smaller */
+  .bottom-fade {
+    height: 4rem;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 380px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .model-card {
+    max-width: 240px;
+  }
+
+  .model-img {
+    height: 160px;
+  }
+
+  .final-card {
+    width: 60px;
+    height: 80px;
+  }
+
+  .size-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+  }
+}
